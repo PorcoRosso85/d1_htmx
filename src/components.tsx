@@ -9,7 +9,7 @@ export const renderer = jsxRenderer(({ children }) => {
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <script src="https://unpkg.com/htmx.org@1.9.3"></script>
-        <script src="https://unpkg.com/hyperscript.org@0.9.9"></script>
+        <script src="https://unpkg.com/hyperscript.org@1.9.6"></script>
         <script src="https://cdn.tailwindcss.com"></script>
         <title>Hono + htmx</title>
       </head>
@@ -58,47 +58,60 @@ export const Item = ({ title, id }: { title: string; id: string }) => (
   </p>
 );
 
+// TODO: なぜhtmxはここも要るのか？
 const HtmlElt = (props: any) => {
   return (
     <html>
       <head>
         <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+        <script src="https://unpkg.com/htmx.org@1.9.3"></script>
       </head>
       <body>
-        <ul id="1000" class="child">
-          <li class="dir" id="1001">
-            Item 1
-            <ul class="child">
-              <li class="file" id="1002">
-                Item 1.1
-                <ul class="child file"></ul>
-              </li>
-              <li class="func" id="1003">
-                Item 1.1.1
+        <ul>
+          <ul id="1000" class="child">
+            <li class="dir" id="1001">
+              Item 1
+              <ul class="child">
+                <li class="file" id="1002">
+                  Item 1.1
+                  <ul class="child file"></ul>
+                </li>
+                <li class="func" id="1003">
+                  Item 1.1.1
+                  <ul class="child"></ul>
+                </li>
+                <li class="func" id="1004">
+                  Item 1.1.2
+                  <ul class="child"></ul>
+                </li>
+                <li class="func" id="1005">
+                  Item 1.1.3
+                  <ul class="child"></ul>
+                </li>
+              </ul>
+              <li class="dir" id="1006">
+                Item 2.1
                 <ul class="child"></ul>
-              </li>
-              <li class="func" id="1004">
-                Item 1.1.2
-                <ul class="child"></ul>
-              </li>
-              <li class="func" id="1005">
-                Item 1.1.3
-                <ul class="child"></ul>
-              </li>
-            </ul>
-            <li class="dir" id="1006">
-              Item 2.1
-              <ul class="child"></ul>
-              <li class="dir" id="1007">
-                Item 2.3
-                <ul class="child"></ul>
-              </li>
-              <li class="dir" id="1008">
-                Item 2.4
-                <ul class="child"></ul>
+                <li class="dir" id="1007">
+                  Item 2.3
+                  <ul class="child"></ul>
+                </li>
+                <li class="dir" id="1008">
+                  Item 2.4
+                  <ul class="child"></ul>
+                </li>
               </li>
             </li>
-          </li>
+            <li
+              id="newest"
+              hx-post="/htmx/newest"
+              hx-target="#newest"
+              hx-trigger="click"
+              hx-swap="outerHTML"
+            >
+              <button>+</button>
+            </li>
+          </ul>
         </ul>
       </body>
       <style>{StyleElt}</style>
@@ -181,3 +194,24 @@ export const Htmx = () => (
     </HtmlElt>
   </>
 );
+
+export const Newest = () => {
+  return (
+    <>
+      <li class="dir" id="1009">
+        Item 2.5
+        <ul class="child"></ul>
+      </li>
+      <li
+        id="newest"
+        hx-post="/htmx/newest"
+        hx-target="#newest"
+        hx-trigger="click"
+        hx-swap="outerHTML"
+      >
+        <button>+</button>
+      </li>
+      <ScriptElt />
+    </>
+  );
+};

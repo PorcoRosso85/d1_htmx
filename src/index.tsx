@@ -2,7 +2,7 @@ import { Hono } from "hono";
 import { z } from "zod";
 import { zValidator } from "@hono/zod-validator";
 
-import { renderer, AddTodo, Item, Htmx } from "./components";
+import { renderer, AddTodo, Item, Htmx, Newest } from "./components";
 
 type Bindings = {
   DB: D1Database;
@@ -66,6 +66,10 @@ app.get("/htmx", async (c) => {
   };
   // return c.html(<Htmx {...props} />);
   return c.html(<Htmx />);
+});
+
+app.post("/htmx/newest", async (c) => {
+  return c.html(<Newest />);
 });
 
 export default app;
