@@ -58,15 +58,12 @@ export const Item = ({ title, id }: { title: string; id: string }) => (
   </p>
 );
 
-interface SiteData {
-  title: string;
-  children?: any;
-}
-
-const HtmlElt = (props) => {
+const HtmlElt = (props: any) => {
   return (
     <html>
-      <head></head>
+      <head>
+        <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+      </head>
       <body>
         <ul id="1000" class="child">
           <li class="dir" id="1001">
@@ -104,13 +101,13 @@ const HtmlElt = (props) => {
           </li>
         </ul>
       </body>
-      {...props.children}
+      <style>{StyleElt}</style>
+      {props.children}
     </html>
   );
 };
 
 const StyleElt = `
-  <style>
     .child {
       min-width: 30%;
     }
@@ -155,8 +152,6 @@ const StyleElt = `
       stroke: black;
       stroke-width: 2;
     }
-  </style>
-  <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
 `;
 
 const ScriptElt = `
@@ -182,7 +177,6 @@ const ScriptElt = `
 export const Htmx = () => (
   <>
     <HtmlElt>
-      <StyleElt />
       <ScriptElt />
     </HtmlElt>
   </>
