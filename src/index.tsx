@@ -68,8 +68,23 @@ app.get("/htmx", async (c) => {
   return c.html(<Htmx />);
 });
 
-app.post("/htmx/newest", async (c) => {
-  return c.html(<Newest />);
-});
+// app.post("/htmx/newest", async (c) => {
+app.post(
+  "htmx/newest",
+  zValidator(
+    "form",
+    z.object({
+      title: z.string().min(1),
+    })
+  ),
+  async (c) => {
+    const { title } = c.req.valid("form");
+    const id = crypto.randomUUID();
+    await c.env.DB.prepare(`INSERT INTO list(id, title) VALUES(?, ?);`)
+      .bind(id, title)
+      .run();
+    return c.html(<Newest id={id} title={title} />);
+  }
+);
 
 export default app;

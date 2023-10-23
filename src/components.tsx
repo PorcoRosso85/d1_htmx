@@ -68,6 +68,22 @@ const HtmlElt = (props: any) => {
       </head>
       <body>
         <ul>
+          <form
+            hx-post="/htmx/newest"
+            hx-target="#newest"
+            hx-swap="outerHTML"
+            _="on htmx:afterRequest reset() me"
+          >
+            <div>
+              <input name="title" type="text" />
+            </div>
+            <button
+              class="text-white bg-blue-700 hover:bg-blue-800 rounded-lg px-5 py-2 text-center"
+              type="submit"
+            >
+              Submit
+            </button>
+          </form>
           <ul id="1000" class="child">
             <li class="dir" id="1001">
               Item 1
@@ -102,15 +118,7 @@ const HtmlElt = (props: any) => {
                 </li>
               </li>
             </li>
-            <li
-              id="newest"
-              hx-post="/htmx/newest"
-              hx-target="#newest"
-              hx-trigger="click"
-              hx-swap="outerHTML"
-            >
-              <button>+</button>
-            </li>
+            <div id="newest"></div>
           </ul>
         </ul>
       </body>
@@ -199,22 +207,14 @@ export const Htmx = () => (
   </>
 );
 
-export const Newest = () => {
+export const Newest = ({ id, title }: { id: string; title: string }) => {
   return (
     <>
-      <li class="dir" id="1009">
-        Item 2.5
+      <li class="dir" id="${id}">
+        {id} + {title}
         <ul class="child"></ul>
       </li>
-      <li
-        id="newest"
-        hx-post="/htmx/newest"
-        hx-target="#newest"
-        hx-trigger="click"
-        hx-swap="outerHTML"
-      >
-        <button>+</button>
-      </li>
+      <div id="newest"></div>
       <ScriptElt />
     </>
   );
