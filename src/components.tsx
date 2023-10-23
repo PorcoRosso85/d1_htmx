@@ -1,5 +1,6 @@
 import { html } from "hono/html";
 import { jsxRenderer } from "hono/jsx-renderer";
+import { string } from "zod";
 
 export const renderer = jsxRenderer(({ children }) => {
   return html`
@@ -57,45 +58,59 @@ export const Item = ({ title, id }: { title: string; id: string }) => (
   </p>
 );
 
-export const Htmx = () => html`
-  <div>
-    <ul id="1000" class="child">
-      <li class="dir" id="1001">
-        Item 1
-        <ul class="child">
-          <li class="file" id="1002">
-            Item 1.1
-            <ul class="child file"></ul>
-          </li>
-          <li class="func" id="1003">
-            Item 1.1.1
-            <ul class="child"></ul>
-          </li>
-          <li class="func" id="1004">
-            Item 1.1.2
-            <ul class="child"></ul>
-          </li>
-          <li class="func" id="1005">
-            Item 1.1.3
-            <ul class="child"></ul>
+interface SiteData {
+  title: string;
+  children?: any;
+}
+
+const HtmlElt = (props) => {
+  return (
+    <html>
+      <head></head>
+      <body>
+        <ul id="1000" class="child">
+          <li class="dir" id="1001">
+            Item 1
+            <ul class="child">
+              <li class="file" id="1002">
+                Item 1.1
+                <ul class="child file"></ul>
+              </li>
+              <li class="func" id="1003">
+                Item 1.1.1
+                <ul class="child"></ul>
+              </li>
+              <li class="func" id="1004">
+                Item 1.1.2
+                <ul class="child"></ul>
+              </li>
+              <li class="func" id="1005">
+                Item 1.1.3
+                <ul class="child"></ul>
+              </li>
+            </ul>
+            <li class="dir" id="1006">
+              Item 2.1
+              <ul class="child"></ul>
+              <li class="dir" id="1007">
+                Item 2.3
+                <ul class="child"></ul>
+              </li>
+              <li class="dir" id="1008">
+                Item 2.4
+                <ul class="child"></ul>
+              </li>
+            </li>
           </li>
         </ul>
-        <li class="dir" id="1006">
-          Item 2.1
-          <ul class="child"></ul>
-          <li class="dir" id="1007">
-            Item 2.3
-            <ul class="child"></ul>
-          </li>
-          <li class="dir" id="1008">
-            Item 2.4
-            <ul class="child"></ul>
-          </li>
-        </li>
-      </li>
-    </ul>
+      </body>
+      {...props.children}
+    </html>
+  );
+};
 
-    <style>
+const StyleElt = `
+  <style>
     .child {
       min-width: 30%;
     }
@@ -140,9 +155,12 @@ export const Htmx = () => html`
       stroke: black;
       stroke-width: 2;
     }
-    </style>
-    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
-    <script>
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+`;
+
+const ScriptElt = `
+<script>
     var nestedSortables = document.querySelectorAll(".child");
     for (var i = 0; i < nestedSortables.length; i++) {
       new Sortable(nestedSortables[i], {
@@ -158,7 +176,14 @@ export const Htmx = () => html`
         },
       });
     }
-    
-  </script>
-  </div>
+   </script> 
 `;
+
+export const Htmx = () => (
+  <>
+    <HtmlElt>
+      <StyleElt />
+      <ScriptElt />
+    </HtmlElt>
+  </>
+);

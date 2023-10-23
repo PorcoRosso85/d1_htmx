@@ -31,9 +31,6 @@ app.get("/", async (c) => {
         })}
         <div id="todo"></div>
       </div>
-      <div>
-        <Htmx />
-      </div>
     </>
   );
 });
@@ -61,6 +58,14 @@ app.delete("/todo/:id", async (c) => {
   await c.env.DB.prepare(`DELETE FROM todo WHERE id = ?;`).bind(id).run();
   c.status(200);
   return c.body(null);
+});
+
+app.get("/htmx", async (c) => {
+  const props = {
+    title: "htmx",
+  };
+  // return c.html(<Htmx {...props} />);
+  return c.html(<Htmx />);
 });
 
 export default app;
