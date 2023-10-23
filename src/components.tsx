@@ -167,25 +167,29 @@ const StyleElt = `
     }
 `;
 
-const ScriptElt = `
-<script>
-    var nestedSortables = document.querySelectorAll(".child");
-    for (var i = 0; i < nestedSortables.length; i++) {
-      new Sortable(nestedSortables[i], {
-        group: "child",
-        animation: 100,
-        fallbackOnBody: true,
-        swapThreshold: 0.65,
-        onChoose: function (evt) {
-          evt.item.classList.add("highlight");
-        },
-        onUnchoose: function (evt) {
-          evt.item.classList.remove("highlight");
-        },
-      });
-    }
-   </script> 
-`;
+const ScriptElt = () => (
+  <script
+    dangerouslySetInnerHTML={{
+      __html: `
+      var nestedSortables = document.querySelectorAll(".child");
+      for (var i = 0; i < nestedSortables.length; i++) {
+        new Sortable(nestedSortables[i], {
+          group: "child",
+          animation: 100,
+          fallbackOnBody: true,
+          swapThreshold: 0.65,
+          onChoose: function (evt) {
+            evt.item.classList.add("highlight");
+          },
+          onUnchoose: function (evt) {
+            evt.item.classList.remove("highlight");
+          },
+        });
+      }
+    `,
+    }}
+  ></script>
+);
 
 export const Htmx = () => (
   <>
