@@ -6,6 +6,7 @@ import { renderer, AddTodo, Item, Htmx, Newest } from "./components";
 import { HtmlElt, ListItem, ScriptElt } from "./components/graphs";
 import { BulkUpdate, EditTable, KeysTest } from "./components/keys";
 import { DeleteRow } from "./components/keys/DeleteRow";
+import { contacts, EditRow, EditTarget } from "./components/keys/EditRow";
 
 type Bindings = {
   DB: D1Database;
@@ -111,17 +112,6 @@ app.delete("/htmx/:id", async (c) => {
   return c.body(null);
 });
 
-app.get("/example", async (c) => {
-  return c.html(
-    <>
-      <script src="https://unpkg.com/htmx.org@1.9.6"></script>
-      {/* <EditTable isEditing={false} /> */}
-      {/* <BulkUpdate /> */}
-      <DeleteRow />
-    </>
-  );
-});
-
 app.get("/example/contact/1/edit", async (c) => {
   return c.html(
     <>
@@ -175,4 +165,27 @@ app.delete("/example/contact/1", async (c) => {
   );
   return c.html(returnHtml);
 });
+
+app.put("/example/contact/1", async (c) => {
+  return c.html(<EditTarget contact={contact} />);
+});
+
+app.get("/example/contact/1", async (c) => {
+  // return c.html(<EditTarget contact={contact} />);
+  return c.html("contact1");
+});
+
+app.get("/example", async (c) => {
+  return c.html(
+    <>
+      <script src="https://unpkg.com/htmx.org@1.9.6"></script>
+      <script src="https://unpkg.com/hyperscript.org@0.9.12"></script>
+      {/* <EditTable isEditing={false} /> */}
+      {/* <BulkUpdate /> */}
+      {/* <DeleteRow /> */}
+      <EditRow contacts={contacts} />
+    </>
+  );
+});
+
 export default app;
