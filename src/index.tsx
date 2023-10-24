@@ -3,6 +3,8 @@ import { z } from "zod";
 import { zValidator } from "@hono/zod-validator";
 
 import { renderer, AddTodo, Item, Htmx, Newest } from "./components";
+import { HtmlElt, ListItem, ScriptElt } from "./components/graphs";
+import { KeysTest } from "./components/keys";
 
 type Bindings = {
   DB: D1Database;
@@ -60,12 +62,26 @@ app.delete("/todo/:id", async (c) => {
   return c.body(null);
 });
 
+type ListItem = {
+  title: string;
+  id: string;
+};
+
 app.get("/htmx", async (c) => {
-  const props = {
-    title: "htmx",
-  };
-  // return c.html(<Htmx {...props} />);
-  return c.html(<Htmx />);
+  const { results } = await c.env.DB.prepare(
+    `SELECT id, title FROM list;`
+  ).all<ListItem>();
+  const listItems = results;
+  return c.html(
+    <HtmlElt>
+      <div>
+        {listItems.map((item) => {
+          return <ListItem id={item.id} title={item.title} />;
+        })}
+      </div>
+      <ScriptElt />
+    </HtmlElt>
+  );
 });
 
 // app.post("/htmx/newest", async (c) => {
@@ -87,4 +103,19 @@ app.post(
   }
 );
 
+app.delete("/htmx/:id", async (c) => {
+  const id = c.req.param("id");
+  await c.env.DB.prepare(`DELETE FROM list WHERE id= ?;`).bind(id).run();
+  c.status(200);
+  return c.body(null);
+});
+
+app.get("/slide", async (c) => {
+  return c.html(
+    <>
+      <script src="https://unpkg.com/htmx.org@1.9.6"></script>
+      <KeysTest />
+    </>
+  );
+});
 export default app;

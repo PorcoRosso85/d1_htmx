@@ -1,5 +1,5 @@
 // TODO: なぜhtmxはここも要るのか？
-const HtmlElt = (props: any) => {
+export const HtmlElt = (props: any) => {
   return (
     <html>
       <head>
@@ -115,7 +115,7 @@ const StyleElt = `
     }
 `;
 
-const ScriptElt = () => (
+export const ScriptElt = () => (
   <script
     dangerouslySetInnerHTML={{
       __html: `
@@ -155,6 +155,27 @@ export const Newest = ({ id, title }: { id: string; title: string }) => {
         <ul class="child"></ul>
       </li>
       <div id="newest"></div>
+      <ScriptElt />
+    </>
+  );
+};
+
+// TODO: id/anyと、hx-targetが効いていない/domError
+export const DeleteButton = (id: any) => {
+  return (
+    <button style="" hx-delete={`/htmx/:id`} hx-target={`#${id}`}>
+      DEL
+    </button>
+  );
+};
+
+export const ListItem = ({ id, title }: { id: string; title: string }) => {
+  return (
+    <>
+      <li class="dir" id={`${id}`}>
+        {title} / {id} / <DeleteButton id={`${id}`} />
+        <ul class="child"></ul>
+      </li>
       <ScriptElt />
     </>
   );
