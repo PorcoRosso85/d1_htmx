@@ -5,6 +5,7 @@ import { zValidator } from "@hono/zod-validator";
 import { renderer, AddTodo, Item, Htmx, Newest } from "./components";
 import { HtmlElt, ListItem, ScriptElt } from "./components/graphs";
 import { BulkUpdate, EditTable, KeysTest } from "./components/keys";
+import { DeleteRow } from "./components/keys/DeleteRow";
 
 type Bindings = {
   DB: D1Database;
@@ -115,7 +116,8 @@ app.get("/example", async (c) => {
     <>
       <script src="https://unpkg.com/htmx.org@1.9.6"></script>
       {/* <EditTable isEditing={false} /> */}
-      <BulkUpdate />
+      {/* <BulkUpdate /> */}
+      <DeleteRow />
     </>
   );
 });
@@ -128,7 +130,7 @@ app.get("/example/contact/1/edit", async (c) => {
   );
 });
 
-app.put("example/contact/1", async (c) => {
+app.put("/example/contact/1", async (c) => {
   return c.html("submitted");
 });
 
@@ -165,4 +167,12 @@ app.put("/example/contact/deactivate", (c) => {
   return c.html(updatedRowHtml);
 });
 
+app.delete("/example/contact/1", async (c) => {
+  const returnHtml = (
+    <tr>
+      <th>deleted</th>
+    </tr>
+  );
+  return c.html(returnHtml);
+});
 export default app;
