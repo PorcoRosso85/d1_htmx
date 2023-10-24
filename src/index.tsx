@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { z } from "zod";
+import { object, z } from "zod";
 import { zValidator } from "@hono/zod-validator";
 
 import { renderer, AddTodo, Item, Htmx, Newest } from "./components";
@@ -10,6 +10,7 @@ import { contacts, EditRow, EditTarget } from "./components/keys/EditRow";
 import { LazyLoading } from "./components/keys/LazyLoading";
 import { FormValidation } from "./components/keys/FormValidation";
 import { InfiniteScroll } from "./components/keys/InfiniteScroll";
+import { ActiveSearch, SearchResults } from "./components/keys/ActiveSearch";
 
 type Bindings = {
   DB: D1Database;
@@ -190,6 +191,21 @@ app.get("example/contacts/page2", async (c) => {
   return c.html(<InfiniteScroll x={2} />);
 });
 
+app.post(
+  "/example/contacts/search",
+  zValidator(
+    "form",
+    z.object({
+      query: z.string().min(1),
+    })
+  ),
+  async (c) => {
+    const { query } = c.req.valid("form");
+    // const query = "v";
+    return c.html(<SearchResults query={query} />);
+  }
+);
+
 app.get("/example", async (c) => {
   return c.html(
     <>
@@ -200,8 +216,11 @@ app.get("/example", async (c) => {
       {/* <DeleteRow /> */}
       {/* <EditRow contacts={contacts} /> */}
       {/* <LazyLoading /> */}
-      <FormValidation isValid={true} />
-      <InfiniteScroll x={1} />
+      {/* <FormValidation isValid={true} /> */}
+      {/* <InfiniteScroll x={1} /> */}
+      <ActiveSearch>
+        <SearchResults query={""} />
+      </ActiveSearch>
     </>
   );
 });
