@@ -9,6 +9,7 @@ import { DeleteRow } from "./components/keys/DeleteRow";
 import { contacts, EditRow, EditTarget } from "./components/keys/EditRow";
 import { LazyLoading } from "./components/keys/LazyLoading";
 import { FormValidation } from "./components/keys/FormValidation";
+import { InfiniteScroll } from "./components/keys/InfiniteScroll";
 
 type Bindings = {
   DB: D1Database;
@@ -184,6 +185,11 @@ app.get("/example/img", async (c) => {
 app.post("/example/contact/:contactId/email", async (c) => {
   return c.html(<FormValidation isValid={false} />);
 });
+
+app.get("example/contacts/page2", async (c) => {
+  return c.html(<InfiniteScroll x={2} />);
+});
+
 app.get("/example", async (c) => {
   return c.html(
     <>
@@ -192,9 +198,10 @@ app.get("/example", async (c) => {
       {/* <EditTable isEditing={false} /> */}
       {/* <BulkUpdate /> */}
       {/* <DeleteRow /> */}
-      <EditRow contacts={contacts} />
-      <LazyLoading />
+      {/* <EditRow contacts={contacts} /> */}
+      {/* <LazyLoading /> */}
       <FormValidation isValid={true} />
+      <InfiniteScroll x={1} />
     </>
   );
 });
