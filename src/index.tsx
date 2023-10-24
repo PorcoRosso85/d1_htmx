@@ -8,6 +8,7 @@ import { BulkUpdate, EditTable, KeysTest } from "./components/keys";
 import { DeleteRow } from "./components/keys/DeleteRow";
 import { contacts, EditRow, EditTarget } from "./components/keys/EditRow";
 import { LazyLoading } from "./components/keys/LazyLoading";
+import { FormValidation } from "./components/keys/FormValidation";
 
 type Bindings = {
   DB: D1Database;
@@ -180,6 +181,9 @@ app.get("/example/img", async (c) => {
   return c.html(<img src="https://htmx.org/img/tokyo.png"></img>);
 });
 
+app.post("/example/contact/:contactId/email", async (c) => {
+  return c.html(<FormValidation isValid={false} />);
+});
 app.get("/example", async (c) => {
   return c.html(
     <>
@@ -190,6 +194,7 @@ app.get("/example", async (c) => {
       {/* <DeleteRow /> */}
       <EditRow contacts={contacts} />
       <LazyLoading />
+      <FormValidation isValid={true} />
     </>
   );
 });
