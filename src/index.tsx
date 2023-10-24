@@ -7,6 +7,7 @@ import { HtmlElt, ListItem, ScriptElt } from "./components/graphs";
 import { BulkUpdate, EditTable, KeysTest } from "./components/keys";
 import { DeleteRow } from "./components/keys/DeleteRow";
 import { contacts, EditRow, EditTarget } from "./components/keys/EditRow";
+import { LazyLoading } from "./components/keys/LazyLoading";
 
 type Bindings = {
   DB: D1Database;
@@ -175,6 +176,10 @@ app.get("/example/contact/1", async (c) => {
   return c.html("contact1");
 });
 
+app.get("/example/img", async (c) => {
+  return c.html(<img src="https://htmx.org/img/tokyo.png"></img>);
+});
+
 app.get("/example", async (c) => {
   return c.html(
     <>
@@ -184,6 +189,7 @@ app.get("/example", async (c) => {
       {/* <BulkUpdate /> */}
       {/* <DeleteRow /> */}
       <EditRow contacts={contacts} />
+      <LazyLoading />
     </>
   );
 });
