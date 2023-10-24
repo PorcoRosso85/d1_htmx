@@ -4,7 +4,7 @@ import { zValidator } from "@hono/zod-validator";
 
 import { renderer, AddTodo, Item, Htmx, Newest } from "./components";
 import { HtmlElt, ListItem, ScriptElt } from "./components/graphs";
-import { KeysTest } from "./components/keys";
+import { EditTable, KeysTest } from "./components/keys";
 
 type Bindings = {
   DB: D1Database;
@@ -110,12 +110,25 @@ app.delete("/htmx/:id", async (c) => {
   return c.body(null);
 });
 
-app.get("/slide", async (c) => {
+app.get("/example", async (c) => {
   return c.html(
     <>
       <script src="https://unpkg.com/htmx.org@1.9.6"></script>
-      <KeysTest />
+      <EditTable isEditing={false} />
     </>
   );
 });
+
+app.get("/example/contact/1/edit", async (c) => {
+  return c.html(
+    <>
+      <EditTable isEditing={true} />
+    </>
+  );
+});
+
+app.put("example/contact/1", async (c) => {
+  return c.html("submitted");
+});
+
 export default app;
