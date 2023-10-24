@@ -4,7 +4,7 @@ import { zValidator } from "@hono/zod-validator";
 
 import { renderer, AddTodo, Item, Htmx, Newest } from "./components";
 import { HtmlElt, ListItem, ScriptElt } from "./components/graphs";
-import { EditTable, KeysTest } from "./components/keys";
+import { BulkUpdate, EditTable, KeysTest } from "./components/keys";
 
 type Bindings = {
   DB: D1Database;
@@ -114,7 +114,8 @@ app.get("/example", async (c) => {
   return c.html(
     <>
       <script src="https://unpkg.com/htmx.org@1.9.6"></script>
-      <EditTable isEditing={false} />
+      {/* <EditTable isEditing={false} /> */}
+      <BulkUpdate />
     </>
   );
 });
@@ -129,6 +130,39 @@ app.get("/example/contact/1/edit", async (c) => {
 
 app.put("example/contact/1", async (c) => {
   return c.html("submitted");
+});
+
+app.put("/example/contact/activate", (c) => {
+  // チェック行, putからidを取得
+  // const checkedRowsId = c.req.
+  //
+  // idからdbを更新
+  //
+  // 更新された行のHTMLを生成
+  const updatedRowHtml = `
+    <tr class="activate">
+      <td><input type='checkbox' name='ids' value='0'></td>
+      <td>Joe Smith</td>
+      <td>joe@smith.org</td>
+      <td>Active</td>
+    </tr>
+  `;
+
+  return c.html(updatedRowHtml);
+});
+
+app.put("/example/contact/deactivate", (c) => {
+  // 更新された行のHTMLを生成
+  const updatedRowHtml = `
+    <tr class="deactivate">
+      <td><input type='checkbox' name='ids' value='0'></td>
+      <td>Joe Smith</td>
+      <td>joe@smith.org</td>
+      <td>Inactive</td>
+    </tr>
+  `;
+
+  return c.html(updatedRowHtml);
 });
 
 export default app;
