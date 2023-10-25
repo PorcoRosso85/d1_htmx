@@ -16,6 +16,11 @@ import {
   CascadingSelects,
   ModelSelect,
 } from "./components/keys/CascadingSelects";
+import {
+  DialogCustomed,
+  DialogCustomedCalled,
+  DialogInBrowser,
+} from "./components/keys/DialogsModal";
 
 type Bindings = {
   DB: D1Database;
@@ -261,6 +266,12 @@ app.get(
     return c.html(<ModelSelect maker={make} />);
   }
 );
+
+app.post("/example/modal/submit", async (c) => {
+  const submitted = "submitted";
+  return c.html(<>{submitted}</>);
+});
+
 app.get("/example", async (c) => {
   return c.html(
     <>
@@ -276,12 +287,18 @@ app.get("/example", async (c) => {
       {/* <ActiveSearch>
         <SearchResults query={""} />
       </ActiveSearch> */}
-      <ProgressBar progress={0} />
-      <CascadingSelects>
+      {/* <ProgressBar progress={0} /> */}
+      {/* <CascadingSelects>
         <ModelSelect maker={"audi"} />
-      </CascadingSelects>
+      </CascadingSelects> */}
+      <DialogCustomed />
+      <DialogInBrowser />
     </>
   );
+});
+
+app.get("/example/modal", async (c) => {
+  return c.html(<DialogCustomedCalled />);
 });
 
 export default app;
