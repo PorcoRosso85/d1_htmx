@@ -21,6 +21,7 @@ import {
   DialogCustomedCalled,
   DialogInBrowser,
 } from "./components/keys/DialogsModal";
+import { TabContents, Tabs } from "./components/keys/Tabs";
 
 type Bindings = {
   DB: D1Database;
@@ -272,6 +273,10 @@ app.post("/example/modal/submit", async (c) => {
   return c.html(<>{submitted}</>);
 });
 
+app.get("/example/tabs/:tabId", async (c) => {
+  return c.html(<TabContents tab={c.req.param("tabId")} />);
+});
+
 app.get("/example", async (c) => {
   return c.html(
     <>
@@ -291,8 +296,9 @@ app.get("/example", async (c) => {
       {/* <CascadingSelects>
         <ModelSelect maker={"audi"} />
       </CascadingSelects> */}
-      <DialogCustomed />
-      <DialogInBrowser />
+      {/* <DialogCustomed /> */}
+      {/* <DialogInBrowser /> */}
+      <Tabs />
     </>
   );
 });
