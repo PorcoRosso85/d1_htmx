@@ -299,6 +299,7 @@ app.get("/example", async (c) => {
       {/* <DialogCustomed /> */}
       {/* <DialogInBrowser /> */}
       <Tabs />
+      <KeysTest />
     </>
   );
 });
