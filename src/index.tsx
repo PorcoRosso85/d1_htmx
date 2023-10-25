@@ -5,7 +5,7 @@ import { zValidator } from "@hono/zod-validator";
 import { renderer, AddTodo, Item, Htmx, Newest } from "./components";
 import { HtmlElt, ListItem, ScriptElt } from "./components/graphs";
 import { BulkUpdate } from "./components/BulkUpdate";
-import { EditTable } from "./components/EditTable";
+import { ClickToEdit } from "./components/ClickToEdit";
 import { KeysTest } from "./components/KeyboardShortcuts";
 import { DeleteRow } from "./components/DeleteRow";
 import { contacts, EditRow, EditTarget } from "./components/EditRow";
@@ -126,16 +126,27 @@ app.delete("/htmx/:id", async (c) => {
   return c.body(null);
 });
 
-app.get("/example/contact/1/edit", async (c) => {
+app.get("/example/contact/:id/edit", async (c) => {
+  const contactId = c.req.param("id");
   return c.html(
     <>
-      <EditTable isEditing={true} />
+      <ClickToEdit isEditing={true} id={contactId} />
     </>
   );
 });
 
-app.put("/example/contact/1", async (c) => {
-  return c.html("submitted");
+app.put("/example/contact/:id", async (c) => {
+  const contactId = c.req.param("id");
+  // TODO: db更新
+  return c.html(
+    <>
+      <ClickToEdit isEditing={false} id={""} />
+      {/* TODO: 消えるメッセージ */}
+      <p hx-delete="this" hx-trigger="load" hx-swap="outerHTML swap:0.5s">
+        submitted contactId:{contactId}
+      </p>
+    </>
+  );
 });
 
 app.put("/example/contact/activate", (c) => {
@@ -184,9 +195,14 @@ app.put("/example/contact/1", async (c) => {
   return c.html(<EditTarget contact={contact} />);
 });
 
-app.get("/example/contact/1", async (c) => {
+app.get("/example/contact/:id", async (c) => {
   // return c.html(<EditTarget contact={contact} />);
-  return c.html("contact1");
+  const contactId = c.req.param("id");
+  return c.html(
+    <>
+      <ClickToEdit isEditing={false} id={contactId} />
+    </>
+  );
 });
 
 app.get("/example/img", async (c) => {
@@ -281,7 +297,7 @@ app.get("/example", async (c) => {
     <>
       <script src="https://unpkg.com/htmx.org@1.9.6"></script>
       <script src="https://unpkg.com/hyperscript.org@0.9.12"></script>
-      <EditTable isEditing={false} />
+      <ClickToEdit isEditing={false} />
       <hr />
       <BulkUpdate />
       <hr />
