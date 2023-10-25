@@ -1,27 +1,26 @@
-import { Hono } from "hono";
+import { Hono, HonoRequest } from "hono";
 import { object, z } from "zod";
 import { zValidator } from "@hono/zod-validator";
 
 import { renderer, AddTodo, Item, Htmx, Newest } from "./components";
 import { HtmlElt, ListItem, ScriptElt } from "./components/graphs";
-import { BulkUpdate, EditTable, KeysTest } from "./components/keys";
-import { DeleteRow } from "./components/keys/DeleteRow";
-import { contacts, EditRow, EditTarget } from "./components/keys/EditRow";
-import { LazyLoading } from "./components/keys/LazyLoading";
-import { FormValidation } from "./components/keys/FormValidation";
-import { InfiniteScroll } from "./components/keys/InfiniteScroll";
-import { ActiveSearch, SearchResults } from "./components/keys/ActiveSearch";
-import { ProgressBar } from "./components/keys/ProgressBar";
-import {
-  CascadingSelects,
-  ModelSelect,
-} from "./components/keys/CascadingSelects";
+import { BulkUpdate } from "./components/BulkUpdate";
+import { EditTable } from "./components/EditTable";
+import { KeysTest } from "./components/KeyboardShortcuts";
+import { DeleteRow } from "./components/DeleteRow";
+import { contacts, EditRow, EditTarget } from "./components/EditRow";
+import { LazyLoading } from "./components/LazyLoading";
+import { FormValidation } from "./components/FormValidation";
+import { InfiniteScroll } from "./components/InfiniteScroll";
+import { ActiveSearch, SearchResults } from "./components/ActiveSearch";
+import { ProgressBar } from "./components/ProgressBar";
+import { CascadingSelects, ModelSelect } from "./components/CascadingSelects";
 import {
   DialogCustomed,
   DialogCustomedCalled,
   DialogInBrowser,
-} from "./components/keys/DialogsModal";
-import { TabContents, Tabs } from "./components/keys/Tabs";
+} from "./components/DialogsModal";
+import { TabContents, Tabs } from "./components/Tabs";
 
 type Bindings = {
   DB: D1Database;
@@ -282,23 +281,36 @@ app.get("/example", async (c) => {
     <>
       <script src="https://unpkg.com/htmx.org@1.9.6"></script>
       <script src="https://unpkg.com/hyperscript.org@0.9.12"></script>
-      {/* <EditTable isEditing={false} /> */}
-      {/* <BulkUpdate /> */}
-      {/* <DeleteRow /> */}
-      {/* <EditRow contacts={contacts} /> */}
-      {/* <LazyLoading /> */}
-      {/* <FormValidation isValid={true} /> */}
-      {/* <InfiniteScroll x={1} /> */}
-      {/* <ActiveSearch>
+      <EditTable isEditing={false} />
+      <hr />
+      <BulkUpdate />
+      <hr />
+      <DeleteRow />
+      <hr />
+      <EditRow contacts={contacts} />
+      <hr />
+      <LazyLoading />
+      <hr />
+      <FormValidation isValid={true} />
+      <hr />
+      <InfiniteScroll x={1} />
+      <hr />
+      <ActiveSearch>
         <SearchResults query={""} />
-      </ActiveSearch> */}
-      {/* <ProgressBar progress={0} /> */}
-      {/* <CascadingSelects>
+      </ActiveSearch>
+      <hr />
+      <ProgressBar progress={0} />
+      <hr />
+      <CascadingSelects>
         <ModelSelect maker={"audi"} />
-      </CascadingSelects> */}
-      {/* <DialogCustomed /> */}
-      {/* <DialogInBrowser /> */}
+      </CascadingSelects>
+      <hr />
+      <DialogCustomed />
+      <hr />
+      <DialogInBrowser />
+      <hr />
       <Tabs />
+      <hr />
       <KeysTest />
     </>
   );
