@@ -11,6 +11,7 @@ import { LazyLoading } from "./components/keys/LazyLoading";
 import { FormValidation } from "./components/keys/FormValidation";
 import { InfiniteScroll } from "./components/keys/InfiniteScroll";
 import { ActiveSearch, SearchResults } from "./components/keys/ActiveSearch";
+import { ProgressBar } from "./components/keys/ProgressBar";
 
 type Bindings = {
   DB: D1Database;
@@ -206,6 +207,43 @@ app.post(
   }
 );
 
+const sessionMap = {};
+
+const startJob = () => {
+  // const startJob = (sessionId?) => {
+  let jobProgress = 0;
+  const step = 100 / ((5 * 1000) / 50);
+  const intervalId = setInterval(() => {
+    jobProgress += step;
+    if (jobProgress >= 100) {
+      jobProgress = 100;
+      clearInterval(intervalId);
+    }
+    // if (sessionId) {
+    //   sessionMap[sessionId] = jobProgress;
+    // }
+  }, 50);
+};
+
+app.post("/example/job/start", async (c) => {
+  // const sessionId = c.req.valid("") //生成させる
+  // startJob(sessionId);
+  startJob();
+  return c.html(<ProgressBar progress={0.01} />);
+});
+
+app.get("/example/job/progress", async (c) => {
+  // const sessionId = /* セッションIDの取得 */;
+  // const jobProgress = sessionMap[sessionId] || 0;
+  const jobProgress = 100;
+  return c.html(<ProgressBar progress={jobProgress} />);
+});
+
+app.post("/example/job/reset", async (c) => {
+  jobProgress = 0;
+  return c.html(<>job resetted!</>);
+});
+
 app.get("/example", async (c) => {
   return c.html(
     <>
@@ -218,9 +256,10 @@ app.get("/example", async (c) => {
       {/* <LazyLoading /> */}
       {/* <FormValidation isValid={true} /> */}
       {/* <InfiniteScroll x={1} /> */}
-      <ActiveSearch>
+      {/* <ActiveSearch>
         <SearchResults query={""} />
-      </ActiveSearch>
+      </ActiveSearch> */}
+      <ProgressBar progress={0} />
     </>
   );
 });
