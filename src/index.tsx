@@ -297,37 +297,26 @@ app.get("/example", async (c) => {
     <>
       <script src="https://unpkg.com/htmx.org@1.9.6"></script>
       <script src="https://unpkg.com/hyperscript.org@0.9.12"></script>
-      <ClickToEdit isEditing={false} />
-      <hr />
-      <BulkUpdate />
-      <hr />
-      <DeleteRow />
-      <hr />
-      <EditRow contacts={contacts} />
-      <hr />
-      <LazyLoading />
-      <hr />
-      <FormValidation isValid={true} />
-      <hr />
-      <InfiniteScroll x={1} />
-      <hr />
+      <ClickToEdit isEditing={false} id={"1"} /> <hr />
+      <BulkUpdate /> <hr />
+      <DeleteRow /> <hr />
+      <EditRow contacts={contacts} /> <hr />
+      <LazyLoading /> <hr />
+      <FormValidation isValid={true} /> <hr />
+      <InfiniteScroll x={1} /> <hr />
       <ActiveSearch>
         <SearchResults query={""} />
-      </ActiveSearch>
+      </ActiveSearch>{" "}
       <hr />
-      <ProgressBar progress={0} />
-      <hr />
+      <ProgressBar progress={0} /> <hr />
       <CascadingSelects>
         <ModelSelect maker={"audi"} />
-      </CascadingSelects>
+      </CascadingSelects>{" "}
       <hr />
-      <DialogCustomed />
-      <hr />
-      <DialogInBrowser />
-      <hr />
-      <Tabs />
-      <hr />
-      <KeysTest />
+      <DialogCustomed /> <hr />
+      <DialogInBrowser /> <hr />
+      <Tabs /> <hr />
+      <KeysTest />{" "}
     </>
   );
 });
