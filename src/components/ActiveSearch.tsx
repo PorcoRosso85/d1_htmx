@@ -1,12 +1,12 @@
-import { TargetsList } from "./contactData";
+import { contactsListData } from "./contacts/contactData";
 
 export const SearchResults = ({ query }) => {
-  const filterdTargetsList = TargetsList.filter((item) =>
+  const filterdcontactsListData = contactsListData.filter((item) =>
     item.lastname.includes(query)
   );
   return (
     <tbody id="search-results" class="">
-      {filterdTargetsList.map((item, index) => (
+      {filterdcontactsListData.map((item, index) => (
         <tr key={index}>
           <td>{item.lastname}</td>
           <td>{item.firstname}</td>

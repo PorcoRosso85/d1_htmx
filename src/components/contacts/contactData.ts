@@ -1,4 +1,6 @@
-export const TargetsList = [
+import { contactData } from "../../domain/types";
+
+export const contactsListData: contactData[] = [
   {
     lastname: "Venus",
     firstname: "Grimes",

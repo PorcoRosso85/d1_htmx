@@ -5,7 +5,7 @@ import { zValidator } from "@hono/zod-validator";
 import { renderer, AddTodo, Item, Htmx, Newest } from "./components";
 import { HtmlElt, ListItem, ScriptElt } from "./components/graphs";
 import { BulkUpdate } from "./components/BulkUpdate";
-import { ClickToEdit } from "./components/ClickToEdit";
+import { ClickToEdit, ContactEltRow } from "./components/ClickToEdit";
 import { KeysTest } from "./components/KeyboardShortcuts";
 import { DeleteRow } from "./components/DeleteRow";
 import { contacts, EditRow, EditTarget } from "./components/EditRow";
@@ -21,6 +21,8 @@ import {
   DialogInBrowser,
 } from "./components/DialogsModal";
 import { TabContents, Tabs } from "./components/Tabs";
+import { contactsListData } from "./components/contacts/contactData";
+import { ContactsTable } from "./components/ContactsTable";
 
 type Bindings = {
   DB: D1Database;
@@ -89,27 +91,6 @@ type ListItem = {
 
 const contactRoute = new Hono();
 contactRoute
-  .get("/:id/edit", async (c) => {
-    const contactId = c.req.param("id");
-    return c.html(
-      <>
-        <ClickToEdit isEditing={true} id={contactId} />
-      </>
-    );
-  })
-  .put("/:id", async (c) => {
-    const contactId = c.req.param("id");
-    // TODO: db更新
-    return c.html(
-      <>
-        <ClickToEdit isEditing={false} id={""} />
-        {/* TODO: 消えるメッセージ */}
-        <p hx-delete="this" hx-trigger="load" hx-swap="outerHTML swap:0.5s">
-          submitted contactId:{contactId}
-        </p>
-      </>
-    );
-  })
   .put("/activate", (c) => {
     const updatedRowHtml = `
     <tr class="activate">
@@ -146,12 +127,37 @@ contactRoute
   .put("/1", async (c) => {
     return c.html(<EditTarget contact={contact} />);
   })
-  .get("/:id", async (c) => {
-    // return c.html(<EditTarget contact={contact} />);
+  .get("/:id/edit", async (c) => {
     const contactId = c.req.param("id");
+    // TODO: どの連絡先を修正するか再取得
+    const contact = contactsListData[contactId];
+    return c.html(
+      <ContactEltRow contact={contact} isEditing={true} index={contactId} />
+    );
+  })
+  .put("/:id", async (c) => {
+    const contactId = c.req.param("id");
+    // TODO: db更新
     return c.html(
       <>
-        <ClickToEdit isEditing={false} id={contactId} />
+        <ClickToEdit isEditing={false} id={""} />
+        {/* TODO: 消えるメッセージ */}
+        <p hx-delete="this" hx-trigger="load" hx-swap="outerHTML swap:0.5s">
+          submitted contactId:{contactId}
+        </p>
+      </>
+    );
+  })
+  .get("/:id", async (c) => {
+    const contactId = c.req.param("id");
+    const contact = contactsListData[contactId];
+    //TODO: apiのpriority
+    return c.html(
+      <>
+        {/* <ContactEltRow contact={contact} isEditing={false} index={contactId} /> */}
+        <tr>
+          <td>hi</td>
+        </tr>
       </>
     );
   })
@@ -289,7 +295,12 @@ exampleRoute
       <>
         <script src="https://unpkg.com/htmx.org@1.9.6"></script>
         <script src="https://unpkg.com/hyperscript.org@0.9.12"></script>
-        <ClickToEdit isEditing={false} id={"1"} /> <hr />
+        <hr />
+        <ContactsTable>
+          <ClickToEdit contactsList={contactsListData} isEditing={false} />
+        </ContactsTable>
+        {/* <ClickToEdit isEditing={false} id={"1"} /> <hr /> */}
+        <hr />
         <BulkUpdate /> <hr />
         <DeleteRow /> <hr />
         <EditRow contacts={contacts} /> <hr />
