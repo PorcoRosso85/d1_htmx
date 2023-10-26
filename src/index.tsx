@@ -5,7 +5,8 @@ import { zValidator } from "@hono/zod-validator";
 import { renderer, AddTodo, Item, Htmx, Newest } from "./components";
 import { HtmlElt, ListItem, ScriptElt } from "./components/graphs";
 import { BulkUpdate } from "./components/BulkUpdate";
-import { ClickToEdit, ContactEltRow } from "./components/ClickToEdit";
+import { ClickToEdit } from "./components/ClickToEdit";
+import { ContactRow } from "./components/contacts/ContactRow";
 import { KeysTest } from "./components/KeyboardShortcuts";
 import { DeleteRow } from "./components/DeleteRow";
 import { contacts, EditRow, EditTarget } from "./components/EditRow";
@@ -22,7 +23,7 @@ import {
 } from "./components/DialogsModal";
 import { TabContents, Tabs } from "./components/Tabs";
 import { contactsListData } from "./components/contacts/contactData";
-import { ContactsTable } from "./components/ContactsTable";
+import { ContactsTable } from "./components/contacts/ContactsTable";
 
 type Bindings = {
   DB: D1Database;
@@ -91,30 +92,41 @@ type ListItem = {
 
 const contactRoute = new Hono();
 contactRoute
-  .put("/activate", (c) => {
-    const updatedRowHtml = `
-    <tr class="activate">
-      <td><input type='checkbox' name='ids' value='0'></td>
-      <td>Joe Smith</td>
-      <td>joe@smith.org</td>
-      <td>Active</td>
-    </tr>
-  `;
-
-    return c.html(updatedRowHtml);
-  })
+  .put(
+    // "/:id/activate",
+    "/activate",
+    zValidator("form", z.object({ ids: z.string().min(1) })),
+    async (c) => {
+      // TODO: リクエスト内のform.name("ids")を取得する方法を確認する
+      const checkedContactIds = await c.req.formData;
+      console.log("####################");
+      console.log(c.req.formData);
+      console.log("####################");
+      console.log(c.req.header);
+      console.log("####################");
+      console.log(c.req.json);
+      console.log("####################");
+      console.log(c.req.param);
+      console.log("####################");
+      console.log(c.req.parseBody);
+      console.log("####################");
+      console.log(c.req.query);
+      console.log("####################");
+      console.log(c.req);
+      console.log(c.req);
+      const contactId = c.req.param("id");
+      const contact = contactsListData[contactId];
+      return c.html(
+        <ContactRow
+          contact={contact}
+          isEditing={false}
+          index={checkedContactIds}
+        />
+      );
+    }
+  )
   .put("/deactivate", (c) => {
-    // 更新された行のHTMLを生成
-    const updatedRowHtml = `
-    <tr class="deactivate">
-      <td><input type='checkbox' name='ids' value='0'></td>
-      <td>Joe Smith</td>
-      <td>joe@smith.org</td>
-      <td>Inactive</td>
-    </tr>
-  `;
-
-    return c.html(updatedRowHtml);
+    return c.html(<></>);
   })
   .delete("/1", async (c) => {
     const returnHtml = (
@@ -132,7 +144,7 @@ contactRoute
     // TODO: どの連絡先を修正するか再取得
     const contact = contactsListData[contactId];
     return c.html(
-      <ContactEltRow contact={contact} isEditing={true} index={contactId} />
+      <ContactRow contact={contact} isEditing={true} index={contactId} />
     );
   })
   .put("/:id", async (c) => {
@@ -154,7 +166,7 @@ contactRoute
     //TODO: apiのpriority
     return c.html(
       <>
-        {/* <ContactEltRow contact={contact} isEditing={false} index={contactId} /> */}
+        {/* <ContactRow contact={contact} isEditing={false} index={contactId} /> */}
         <tr>
           <td>hi</td>
         </tr>
@@ -296,12 +308,14 @@ exampleRoute
         <script src="https://unpkg.com/htmx.org@1.9.6"></script>
         <script src="https://unpkg.com/hyperscript.org@0.9.12"></script>
         <hr />
-        <ContactsTable>
-          <ClickToEdit contactsList={contactsListData} isEditing={false} />
-        </ContactsTable>
         {/* <ClickToEdit isEditing={false} id={"1"} /> <hr /> */}
         <hr />
-        <BulkUpdate /> <hr />
+        <BulkUpdate>
+          <ContactsTable>
+            <ClickToEdit contactsList={contactsListData} isEditing={false} />
+          </ContactsTable>
+        </BulkUpdate>{" "}
+        <hr />
         <DeleteRow /> <hr />
         <EditRow contacts={contacts} /> <hr />
         <LazyLoading /> <hr />
