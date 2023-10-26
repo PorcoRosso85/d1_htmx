@@ -33,6 +33,14 @@ type Todo = {
 
 const app = new Hono<{ Bindings: Bindings }>();
 
+const exampleRoute = new Hono();
+const contactRoute = new Hono();
+const apiRoute = new Hono();
+const todoRoute = new Hono();
+
+contactRoute.get("/", (c) => c.text("contact"));
+exampleRoute.route("/contact", contactRoute);
+
 app.get("*", renderer);
 
 app.get("/", async (c) => {
@@ -53,8 +61,9 @@ app.get("/", async (c) => {
   );
 });
 
-app.post(
-  "/todo",
+todoRoute.post(
+  // app.post(
+  "/",
   zValidator(
     "form",
     z.object({
@@ -71,7 +80,7 @@ app.post(
   }
 );
 
-app.delete("/todo/:id", async (c) => {
+todoRoute.delete("/:id", async (c) => {
   const id = c.req.param("id");
   await c.env.DB.prepare(`DELETE FROM todo WHERE id = ?;`).bind(id).run();
   c.status(200);
@@ -325,4 +334,7 @@ app.get("/example/modal", async (c) => {
   return c.html(<DialogCustomedCalled />);
 });
 
+app.route("/todo", todoRoute);
+app.route("/contact", contactRoute);
+app.route("/example", exampleRoute);
 export default app;
