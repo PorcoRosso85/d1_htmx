@@ -128,14 +128,6 @@ contactRoute
   .put("/deactivate", (c) => {
     return c.html(<></>);
   })
-  .delete("/1", async (c) => {
-    const returnHtml = (
-      <tr>
-        <th>deleted</th>
-      </tr>
-    );
-    return c.html(returnHtml);
-  })
   .put("/1", async (c) => {
     return c.html(<EditTarget contact={contact} />);
   })
@@ -172,6 +164,14 @@ contactRoute
         </tr>
       </>
     );
+  })
+  .delete("/:id", async (c) => {
+    const returnHtml = (
+      <tr>
+        <th>deleted</th>
+      </tr>
+    );
+    return c.html(returnHtml);
   })
   .post("/:contactId/email", async (c) => {
     return c.html(<FormValidation isValid={false} />);
@@ -316,7 +316,6 @@ exampleRoute
           </ContactsTable>
         </BulkUpdate>{" "}
         <hr />
-        <DeleteRow /> <hr />
         <EditRow contacts={contacts} /> <hr />
         <LazyLoading /> <hr />
         <FormValidation isValid={true} /> <hr />
