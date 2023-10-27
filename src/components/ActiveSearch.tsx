@@ -1,12 +1,29 @@
-import { contactsListData } from "./contacts/contactData";
+import { contactsListData, addIds } from "./contacts/contactData";
+import MiniSearch from "minisearch";
 
 export const SearchResults = ({ query }) => {
-  const filterdcontactsListData = contactsListData.filter((item) =>
-    item.lastname.includes(query)
-  );
+  // const filteredcontactsListData = contactsListData.filter((item) =>
+  //   item.lastname.includes(query)
+  // );
+
+  const queryContactsListData = (data, query) => {
+    const minisearch = new MiniSearch({
+      fields: ["firstname", "lastname", "email"],
+    });
+    minisearch.addAll(data);
+    let results = minisearch.search(query);
+    return results.map((result) => {
+      return data.find((contact) => contact.id == result.id);
+    });
+  };
+
+  const searchResults = queryContactsListData(addIds(contactsListData), query);
+  console.log(`results: ${searchResults}minisearch########`);
+
   return (
     <tbody id="search-results" class="">
-      {filterdcontactsListData.map((item, index) => (
+      {/* {filteredcontactsListData.map((item, index) => ( */}
+      {searchResults.map((item, index) => (
         <tr key={index}>
           <td>{item.lastname}</td>
           <td>{item.firstname}</td>
@@ -33,10 +50,11 @@ export const ActiveSearch = (props) => {
         type="search"
         name="query"
         placeholder="Begin Typing To Search Users..."
-        hx-post="example/contacts/search"
+        hx-post="example/contact/search"
         hx-trigger="keyup changed delay:500ms, search"
         hx-target="#search-results"
         hx-indicator=".htmx-indicator"
+        hx-ext="debug"
       />
       <table class="table">
         <thead>

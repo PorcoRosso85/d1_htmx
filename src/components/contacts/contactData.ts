@@ -1,5 +1,45 @@
 import { contactData } from "../../domain/types";
 
+export const _contactsListData = [
+  {
+    lastname: "Venus",
+    firstname: "Grimes",
+    email: "lectus.rutrum@Duisa.edu",
+  },
+  {
+    lastname: "Fletcher",
+    firstname: "Owen",
+    email: "metus@Aenean.org",
+  },
+  {
+    lastname: "William",
+    firstname: "Hale",
+    email: "eu.dolor@risusodio.edu",
+  },
+  {
+    lastname: "TaShya",
+    firstname: "Cash",
+    email: "tincidunt.orci.quis@nuncnullavulputate.co.uk",
+  },
+  {
+    lastname: "Jakeem",
+    firstname: "Walker",
+    email: "Morbi.vehicula.Pellentesque@faucibusorci.org",
+  },
+];
+
+const generateRandomId = () => {
+  return Math.floor(Math.random() * 10000);
+};
+
+export const addIds = (nonAddedIdList) => {
+  const addedIdList = nonAddedIdList.map((contact) => {
+    const addedContact = { ...contact, id: generateRandomId() };
+    return addedContact;
+  });
+  return addedIdList;
+};
+
 export const contactsListData: contactData[] = [
   {
     lastname: "Venus",

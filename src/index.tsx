@@ -114,14 +114,15 @@ contactRoute
       console.log("####################");
       console.log(c.req);
       console.log(c.req);
-      const contactId = c.req.param("id");
-      const contact = contactsListData[contactId];
+      // const contactId = c.req.param("id");
+      // const contact = contactsListData[contactId];
       return c.html(
-        <ContactRow
-          contact={contact}
-          isEditing={false}
-          index={checkedContactIds}
-        />
+        <>activate</>
+        // <ContactRow
+        //   contact={contact}
+        //   isEditing={false}
+        //   index={checkedContactIds}
+        // />
       );
     }
   )
@@ -178,7 +179,21 @@ contactRoute
   })
   .get("example/contacts/page2", async (c) => {
     return c.html(<InfiniteScroll x={2} />);
-  });
+  })
+  .post(
+    "/search",
+    zValidator(
+      "form",
+      z.object({
+        query: z.string().min(1),
+      })
+    ),
+    async (c) => {
+      const { query } = c.req.valid("form");
+      // const query = "v";
+      return c.html(<SearchResults query={query} />);
+    }
+  );
 
 // const sessionMap = {};
 
@@ -282,20 +297,6 @@ exampleRoute
     c.status(200);
     return c.body(null);
   })
-  .post(
-    "/contacts/search",
-    zValidator(
-      "form",
-      z.object({
-        query: z.string().min(1),
-      })
-    ),
-    async (c) => {
-      const { query } = c.req.valid("form");
-      // const query = "v";
-      return c.html(<SearchResults query={query} />);
-    }
-  )
   .get("/img", async (c) => {
     return c.html(<img src="https://htmx.org/img/tokyo.png"></img>);
   })
@@ -307,19 +308,14 @@ exampleRoute
       <>
         <script src="https://unpkg.com/htmx.org@1.9.6"></script>
         <script src="https://unpkg.com/hyperscript.org@0.9.12"></script>
-        <hr />
-        {/* <ClickToEdit isEditing={false} id={"1"} /> <hr /> */}
-        <hr />
         <BulkUpdate>
           <ContactsTable>
             <ClickToEdit contactsList={contactsListData} isEditing={false} />
           </ContactsTable>
         </BulkUpdate>{" "}
         <hr />
-        <EditRow contacts={contacts} /> <hr />
         <LazyLoading /> <hr />
         <FormValidation isValid={true} /> <hr />
-        <InfiniteScroll x={1} /> <hr />
         <ActiveSearch>
           <SearchResults query={""} />
         </ActiveSearch>{" "}
@@ -332,7 +328,9 @@ exampleRoute
         <DialogCustomed /> <hr />
         <DialogInBrowser /> <hr />
         <Tabs /> <hr />
-        <KeysTest />{" "}
+        <KeysTest />
+        <hr />
+        <InfiniteScroll x={1} /> <hr />
       </>
     );
   });
