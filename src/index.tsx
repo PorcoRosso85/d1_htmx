@@ -195,42 +195,43 @@ contactRoute
     }
   );
 
-// const sessionMap = {};
+const jobRoute = new Hono();
 
-// const startJob = () => {
-//   // const startJob = (sessionId?) => {
-//   let jobProgress = 0;
-//   const step = 100 / ((5 * 1000) / 50);
-//   const intervalId = setInterval(() => {
-//     jobProgress += step;
-//     if (jobProgress >= 100) {
-//       jobProgress = 100;
-//       clearInterval(intervalId);
-//     }
-//     // if (sessionId) {
-//     //   sessionMap[sessionId] = jobProgress;
-//     // }
-//   }, 50);
-// };
+const sessionMap = {};
 
-// app.post("/example/job/start", async (c) => {
-//   // const sessionId = c.req.valid("") //生成させる
-//   // startJob(sessionId);
-//   startJob();
-//   return c.html(<ProgressBar progress={0.01} />);
-// });
+const startJob = () => {
+  // const startJob = (sessionId?) => {
+  let jobProgress = 0;
+  const step = 100 / ((5 * 1000) / 50);
+  const intervalId = setInterval(() => {
+    jobProgress += step;
+    if (jobProgress >= 100) {
+      jobProgress = 100;
+      clearInterval(intervalId);
+    }
+    // if (sessionId) {
+    //   sessionMap[sessionId] = jobProgress;
+    // }
+  }, 50);
+};
 
-// app.get("/example/job/progress", async (c) => {
-//   // const sessionId = /* セッションIDの取得 */;
-//   // const jobProgress = sessionMap[sessionId] || 0;
-//   const jobProgress = 100;
-//   return c.html(<ProgressBar progress={jobProgress} />);
-// });
-
-// app.post("/example/job/reset", async (c) => {
-//   jobProgress = 0;
-//   return c.html(<>job resetted!</>);
-// });
+jobRoute
+  .post("/start", async (c) => {
+    // const sessionId = c.req.valid("") //生成させる
+    // startJob(sessionId);
+    startJob();
+    return c.html(<ProgressBar progress={0.01} />);
+  })
+  .get("/progress", async (c) => {
+    // const sessionId = /* セッションIDの取得 */;
+    // const jobProgress = sessionMap[sessionId] || 0;
+    const jobProgress = 100;
+    return c.html(<ProgressBar progress={jobProgress} />);
+  })
+  .post("/reset", async (c) => {
+    jobProgress = 0;
+    return c.html(<>job resetted!</>);
+  });
 
 app.get(
   "/example/models",
@@ -308,7 +309,7 @@ exampleRoute
       <>
         <script src="https://unpkg.com/htmx.org@1.9.6"></script>
         <script src="https://unpkg.com/hyperscript.org@0.9.12"></script>
-        <BulkUpdate>
+        {/* <BulkUpdate>
           <ContactsTable>
             <ClickToEdit contactsList={contactsListData} isEditing={false} />
           </ContactsTable>
@@ -319,7 +320,7 @@ exampleRoute
         <ActiveSearch>
           <SearchResults query={""} />
         </ActiveSearch>{" "}
-        <hr />
+        <hr /> */}
         <ProgressBar progress={0} /> <hr />
         <CascadingSelects>
           <ModelSelect maker={"audi"} />
@@ -338,5 +339,6 @@ exampleRoute
 app.route("/todo", todoRoute);
 exampleRoute.route("/contact", contactRoute);
 exampleRoute.route("/modal", modalRoute);
+exampleRoute.route("/job", jobRoute);
 app.route("/example", exampleRoute);
 export default app;

@@ -43,7 +43,7 @@ export const ProgressBar = ({ progress }) => {
         <style>{style}</style>
         <div
           hx-trigger="done"
-          hx-get="/job"
+          hx-get="/example/job/progress"
           hx-swap="outerHTML"
           hx-target="this"
           class=""
@@ -53,7 +53,7 @@ export const ProgressBar = ({ progress }) => {
           </h3>
 
           <div
-            hx-get="/job/progress"
+            hx-get="/example/job/progress"
             hx-trigger="every 600ms"
             hx-target="this"
             hx-swap="innerHTML"
@@ -78,12 +78,13 @@ export const ProgressBar = ({ progress }) => {
       </>
     );
   } else if (progress == 100) {
+    // TODO: グローバル変数のリセット処理の追加
     return (
       <>
         <style>{style}</style>
         <div
           hx-trigger="done"
-          hx-get="/job"
+          hx-get="/example/job/progress"
           hx-swap="outerHTML"
           hx-target="this"
           class=""
@@ -93,7 +94,7 @@ export const ProgressBar = ({ progress }) => {
           </h3>
 
           <div
-            hx-get="/job/progress"
+            hx-get="/example/job/progress"
             hx-trigger="none"
             hx-target="this"
             hx-swap="innerHTML"
