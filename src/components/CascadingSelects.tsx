@@ -6,7 +6,7 @@ export const CascadingSelects = (props) => {
           <label>Make</label>
           <select
             name="make"
-            hx-get="/example/models"
+            hx-get="/example/model"
             hx-target="#models"
             hx-indicator=".htmx-indicator"
           >
@@ -38,7 +38,7 @@ const Model = {
 };
 
 export const ModelSelect = ({ maker }) => {
-  const models = Model[maker] || [];
+  const models = Model[maker.toLowerCase()] || [];
   return (
     <>
       {models.map((model) => (

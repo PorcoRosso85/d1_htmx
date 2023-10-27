@@ -233,19 +233,11 @@ jobRoute
     return c.html(<>job resetted!</>);
   });
 
-app.get(
-  "/example/models",
-  zValidator(
-    "form",
-    z.object({
-      make: z.string(),
-    })
-  ),
-  async (c) => {
-    const { make } = c.req.valid("form");
-    return c.html(<ModelSelect maker={make} />);
-  }
-);
+const modelRoute = new Hono();
+modelRoute.get("/", async (c) => {
+  const make = c.req.query("make");
+  return c.html(<ModelSelect maker={make} />);
+});
 
 const modalRoute = new Hono();
 modalRoute
@@ -321,7 +313,7 @@ exampleRoute
           <SearchResults query={""} />
         </ActiveSearch>{" "}
         <hr /> */}
-        <ProgressBar progress={0} /> <hr />
+        {/* <ProgressBar progress={0} /> <hr /> */}
         <CascadingSelects>
           <ModelSelect maker={"audi"} />
         </CascadingSelects>{" "}
@@ -340,5 +332,6 @@ app.route("/todo", todoRoute);
 exampleRoute.route("/contact", contactRoute);
 exampleRoute.route("/modal", modalRoute);
 exampleRoute.route("/job", jobRoute);
+exampleRoute.route("/model", modelRoute);
 app.route("/example", exampleRoute);
 export default app;
