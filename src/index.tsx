@@ -3,6 +3,7 @@ import { object, z } from "zod";
 import { zValidator } from "@hono/zod-validator";
 import { basicAuth } from "hono/basic-auth";
 import { bearerAuth } from "hono/bearer-auth";
+import { cache } from "hono/cache";
 
 import { renderer, AddTodo, Item, Htmx, Newest } from "./components";
 import {
@@ -276,6 +277,7 @@ apiRoute.use("/*", bearerAuth({ token })).get("/page", (c) => {
 
 const exampleRoute = new Hono();
 exampleRoute
+  .get("*", cache({ cacheName: "example-app", cacheControl: "max-age=3600" }))
   .get("/htmx", async (c) => {
     const { results } = await c.env.DB.prepare(
       `SELECT id, title FROM list;`
