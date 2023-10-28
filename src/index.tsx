@@ -5,6 +5,7 @@ import { basicAuth } from "hono/basic-auth";
 import { bearerAuth } from "hono/bearer-auth";
 import { cache } from "hono/cache";
 import { cors } from "hono/cors";
+import { etag } from "hono/etag";
 
 import { renderer, AddTodo, Item, Htmx, Newest } from "./components";
 import {
@@ -289,6 +290,11 @@ apiRoute
   .get("/page", (c) => {
     return c.html(<>api already bearer authed</>);
   });
+
+const etagRoute = new Hono();
+etagRoute.use("/*", etag()).get("/route", (c) => {
+  return c.text("not need request if you have this etag");
+});
 
 const exampleRoute = new Hono();
 exampleRoute
