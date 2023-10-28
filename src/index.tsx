@@ -2,6 +2,7 @@ import { Hono, HonoRequest } from "hono";
 import { object, z } from "zod";
 import { zValidator } from "@hono/zod-validator";
 import { basicAuth } from "hono/basic-auth";
+import { bearerAuth } from "hono/bearer-auth";
 
 import { renderer, AddTodo, Item, Htmx, Newest } from "./components";
 import {
@@ -41,8 +42,6 @@ type Todo = {
 };
 
 const app = new Hono<{ Bindings: Bindings }>();
-
-const apiRoute = new Hono();
 
 app.get("*", renderer);
 
@@ -257,17 +256,23 @@ modalRoute
 
 const authRoute = new Hono();
 authRoute
-  .get("/page", (c) => {
+  .get("/basic", (c) => {
     return c.html(
       <>
         <script src="https://unpkg.com/htmx.org@1.9.3"></script>
-        <button hx-delete="/example/auth/page">delete page</button>
+        <button hx-delete="/example/auth/basic">delete page</button>
       </>
     );
   })
-  .delete("/page", basicAuth({ username: "root", password: "root" }), (c) => {
+  .delete("/basic", basicAuth({ username: "root", password: "root" }), (c) => {
     return c.html(<>page deleted</>);
   });
+
+const apiRoute = new Hono();
+const token = "HONO";
+apiRoute.use("/*", bearerAuth({ token })).get("/page", (c) => {
+  return c.html(<>api already bearer authed</>);
+});
 
 const exampleRoute = new Hono();
 exampleRoute
@@ -354,5 +359,6 @@ exampleRoute.route("/modal", modalRoute);
 exampleRoute.route("/job", jobRoute);
 exampleRoute.route("/model", modelRoute);
 exampleRoute.route("/auth", authRoute);
+exampleRoute.route("/api", apiRoute);
 app.route("/example", exampleRoute);
 export default app;
