@@ -7,6 +7,7 @@ import { cache } from "hono/cache";
 import { cors } from "hono/cors";
 import { etag } from "hono/etag";
 import { jwt } from "hono/jwt";
+import { logger } from "hono/logger";
 
 import { renderer, AddTodo, Item, Htmx, Newest } from "./components";
 import {
@@ -47,25 +48,26 @@ type Todo = {
 
 const app = new Hono<{ Bindings: Bindings }>();
 
-app.get("*", renderer);
-
-app.get("/", async (c) => {
-  const { results } = await c.env.DB.prepare(
-    `SELECT id, title FROM todo;`
-  ).all<Todo>();
-  const todos = results;
-  return c.render(
-    <>
-      <div>
-        <AddTodo />
-        {todos.map((todo) => {
-          return <Item title={todo.title} id={todo.id} />;
-        })}
-        <div id="todo"></div>
-      </div>
-    </>
-  );
-});
+app
+  .use("*", logger())
+  .get("*", renderer)
+  .get("/", async (c) => {
+    const { results } = await c.env.DB.prepare(
+      `SELECT id, title FROM todo;`
+    ).all<Todo>();
+    const todos = results;
+    return c.render(
+      <>
+        <div>
+          <AddTodo />
+          {todos.map((todo) => {
+            return <Item title={todo.title} id={todo.id} />;
+          })}
+          <div id="todo"></div>
+        </div>
+      </>
+    );
+  });
 
 const todoRoute = new Hono();
 todoRoute
@@ -284,7 +286,6 @@ authRoute
 const apiRoute = new Hono();
 const token = "HONO";
 apiRoute
-  // .use("*", logger())
   .use(
     "/*",
     cors({
