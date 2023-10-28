@@ -6,6 +6,7 @@ import { bearerAuth } from "hono/bearer-auth";
 import { cache } from "hono/cache";
 import { cors } from "hono/cors";
 import { etag } from "hono/etag";
+import { jwt } from "hono/jwt";
 
 import { renderer, AddTodo, Item, Htmx, Newest } from "./components";
 import {
@@ -269,6 +270,15 @@ authRoute
   })
   .delete("/basic", basicAuth({ username: "root", password: "root" }), (c) => {
     return c.html(<>page deleted</>);
+  })
+  .use(
+    "/jwt/*",
+    jwt({
+      secret: "JWT-SECRET",
+    })
+  )
+  .get("/jwt/page", (c) => {
+    return c.text("authed by JWT");
   });
 
 const apiRoute = new Hono();
