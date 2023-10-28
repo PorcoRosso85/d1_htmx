@@ -1,7 +1,6 @@
 import { html } from "hono/html";
 import { jsxRenderer } from "hono/jsx-renderer";
 import { string } from "zod";
-import { Htmx, Newest } from "./graphs";
 
 export const renderer = jsxRenderer(({ children }) => {
   return html`
@@ -58,5 +57,3 @@ export const Item = ({ title, id }: { title: string; id: string }) => (
     <button class="font-medium">Delete</button>
   </p>
 );
-
-export { Htmx, Newest };

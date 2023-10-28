@@ -1,74 +1,6 @@
 // TODO: なぜhtmxはここも要るのか？
-export const HtmlElt = (props: any) => {
-  return (
-    <html>
-      <head>
-        <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
-        <script src="https://unpkg.com/htmx.org@1.9.3"></script>
-      </head>
-      <body>
-        <ul>
-          <form
-            hx-post="/htmx/newest"
-            hx-target="#newest"
-            hx-swap="outerHTML"
-            _="on htmx:afterRequest reset() me"
-          >
-            <div>
-              <input name="title" type="text" />
-            </div>
-            <button
-              class="text-white bg-blue-700 hover:bg-blue-800 rounded-lg px-5 py-2 text-center"
-              type="submit"
-            >
-              Submit
-            </button>
-          </form>
-          <ul id="1000" class="child">
-            <li class="dir" id="1001">
-              Item 1
-              <ul class="child">
-                <li class="file" id="1002">
-                  Item 1.1
-                  <ul class="child file"></ul>
-                </li>
-                <li class="func" id="1003">
-                  Item 1.1.1
-                  <ul class="child"></ul>
-                </li>
-                <li class="func" id="1004">
-                  Item 1.1.2
-                  <ul class="child"></ul>
-                </li>
-                <li class="func" id="1005">
-                  Item 1.1.3
-                  <ul class="child"></ul>
-                </li>
-              </ul>
-              <li class="dir" id="1006">
-                Item 2.1
-                <ul class="child"></ul>
-                <li class="dir" id="1007">
-                  Item 2.3
-                  <ul class="child"></ul>
-                </li>
-                <li class="dir" id="1008">
-                  Item 2.4
-                  <ul class="child"></ul>
-                </li>
-              </li>
-            </li>
-            <div id="newest"></div>
-          </ul>
-        </ul>
-      </body>
-      <style>{StyleElt}</style>
-      {props.children}
-    </html>
-  );
-};
-
-const StyleElt = `
+export const Htmx = (props: any) => {
+  const StyleElt = `
     .child {
       min-width: 30%;
     }
@@ -115,6 +47,25 @@ const StyleElt = `
     }
 `;
 
+  return (
+    <html>
+      <head>
+        <style>{StyleElt}</style>
+        <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+        {/* <script src="https://unpkg.com/htmx.org@1.9.3"></script> */}
+      </head>
+      <body>
+        <AddNewNode />
+        <ul class="child">
+          <ExampleNodes />
+          {props.children}
+        </ul>
+      </body>
+      <ScriptElt />
+    </html>
+  );
+};
+
 export const ScriptElt = () => (
   <script
     dangerouslySetInnerHTML={{
@@ -139,31 +90,70 @@ export const ScriptElt = () => (
   ></script>
 );
 
-export const Htmx = () => (
-  <>
-    <HtmlElt>
-      <ScriptElt />
-    </HtmlElt>
-  </>
-);
-
-export const Newest = ({ id, title }: { id: string; title: string }) => {
+const ExampleNodes = () => {
   return (
-    <>
-      <li class="dir" id="${id}">
-        {id} + {title}
-        <ul class="child"></ul>
+    <ul id="1000" class="child">
+      <li class="dir" id="1001">
+        Item 1
+        <ul class="child">
+          <li class="file" id="1002">
+            Item 1.1
+            <ul class="child file"></ul>
+          </li>
+          <li class="func" id="1003">
+            Item 1.1.1
+            <ul class="child"></ul>
+          </li>
+          <li class="func" id="1004">
+            Item 1.1.2
+            <ul class="child"></ul>
+          </li>
+          <li class="func" id="1005">
+            Item 1.1.3
+            <ul class="child"></ul>
+          </li>
+        </ul>
+        <li class="dir" id="1006">
+          Item 2.1
+          <ul class="child"></ul>
+          <li class="dir" id="1007">
+            Item 2.3
+            <ul class="child"></ul>
+          </li>
+          <li class="dir" id="1008">
+            Item 2.4
+            <ul class="child"></ul>
+          </li>
+          {/* {props.children} */}
+        </li>
       </li>
       <div id="newest"></div>
-      <ScriptElt />
-    </>
+    </ul>
+  );
+};
+const AddNewNode = () => {
+  return (
+    <form
+      hx-post="/example/htmx/add"
+      hx-target="#added"
+      hx-swap="outerHTML"
+      _="on htmx:afterRequest reset() me"
+    >
+      <input name="title" type="text" />
+      <button
+        class="text-white bg-blue-700 hover:bg-blue-800 rounded-lg px-5 py-2 text-center"
+        type="submit"
+      >
+        Submit
+      </button>
+    </form>
   );
 };
 
 // TODO: id/anyと、hx-targetが効いていない/domError
 export const DeleteButton = (id: any) => {
   return (
-    <button style="" hx-delete={`/htmx/:id`} hx-target={`#${id}`}>
+    <button style="" hx-delete={`/example/htmx/:id`} hx-target={`#${id}`}>
       DEL
     </button>
   );
@@ -171,12 +161,10 @@ export const DeleteButton = (id: any) => {
 
 export const ListItem = ({ id, title }: { id: string; title: string }) => {
   return (
-    <>
-      <li class="dir" id={`${id}`}>
-        {title} / {id} / <DeleteButton id={`${id}`} />
-        <ul class="child"></ul>
-      </li>
-      <ScriptElt />
-    </>
+    <li class="dir" id={`${id}`}>
+      {title} / {id} / <DeleteButton id={`${id}`} />
+      <ul class="child"></ul>
+      <div id="added"></div>
+    </li>
   );
 };

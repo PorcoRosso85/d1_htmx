@@ -9,13 +9,8 @@ import { etag } from "hono/etag";
 import { jwt } from "hono/jwt";
 import { logger } from "hono/logger";
 
-import { renderer, AddTodo, Item, Htmx, Newest } from "./components";
-import {
-  DeleteButton,
-  HtmlElt,
-  ListItem,
-  ScriptElt,
-} from "./components/graphs";
+import { renderer, AddTodo, Item } from "./components";
+import { Htmx, ListItem, ScriptElt } from "./components/graphs";
 import { BulkUpdate } from "./components/BulkUpdate";
 import { ClickToEdit } from "./components/ClickToEdit";
 import { ContactRow } from "./components/contacts/ContactRow";
@@ -308,27 +303,26 @@ etagRoute.use("/*", etag()).get("/route", (c) => {
   return c.text("not need request if you have this etag");
 });
 
-const exampleRoute = new Hono();
-exampleRoute
-  .get("*", cache({ cacheName: "example-app", cacheControl: "max-age=3600" }))
-  .get("/htmx", async (c) => {
+const htmxRoute = new Hono();
+htmxRoute
+  .get("/", async (c) => {
     const { results } = await c.env.listDB
       .prepare(`SELECT id, title FROM list;`)
       .all<ListItem>();
     const listItems = results;
     return c.html(
-      <HtmlElt>
+      <Htmx>
         <div>
           {listItems.map((item) => {
             return <ListItem id={item.id} title={item.title} />;
           })}
         </div>
         <ScriptElt />
-      </HtmlElt>
+      </Htmx>
     );
   })
   .post(
-    "/htmx/newest",
+    "/add",
     zValidator(
       "form",
       z.object({
@@ -342,15 +336,32 @@ exampleRoute
         .prepare(`INSERT INTO list(id, title) VALUES(?, ?);`)
         .bind(id, title)
         .run();
-      return c.html(<Newest id={id} title={title} />);
+      const { results } = await c.env.listDB
+        .prepare(`SELECT id, title FROM list;`)
+        .all<ListItem>();
+      const listItems = results;
+      return c.html(
+        <Htmx>
+          <div>
+            {listItems.map((item) => {
+              return <ListItem id={item.id} title={item.title} />;
+            })}
+          </div>
+          <ScriptElt />
+        </Htmx>
+      );
     }
   )
-  .delete("/htmx/:id", async (c) => {
+  .delete("/:id", async (c) => {
     const id = c.req.param("id");
     await c.env.todoDB.prepare(`DELETE FROM list WHERE id= ?;`).bind(id).run();
     c.status(200);
     return c.body(null);
-  })
+  });
+
+const exampleRoute = new Hono();
+exampleRoute
+  .get("*", cache({ cacheName: "example-app", cacheControl: "max-age=3600" }))
   .get("/img", async (c) => {
     return c.html(<img src="https://htmx.org/img/tokyo.png"></img>);
   })
@@ -362,7 +373,7 @@ exampleRoute
       <>
         <script src="https://unpkg.com/htmx.org@1.9.6"></script>
         <script src="https://unpkg.com/hyperscript.org@0.9.12"></script>
-        {/* <BulkUpdate>
+        <BulkUpdate>
           <ContactsTable>
             <ClickToEdit contactsList={contactsListData} isEditing={false} />
           </ContactsTable>
@@ -373,8 +384,8 @@ exampleRoute
         <ActiveSearch>
           <SearchResults query={""} />
         </ActiveSearch>{" "}
-        <hr /> */}
-        {/* <ProgressBar progress={0} /> <hr /> */}
+        <hr />
+        <ProgressBar progress={0} /> <hr />
         <CascadingSelects>
           <ModelSelect maker={"audi"} />
         </CascadingSelects>{" "}
@@ -396,5 +407,6 @@ exampleRoute.route("/job", jobRoute);
 exampleRoute.route("/model", modelRoute);
 exampleRoute.route("/auth", authRoute);
 exampleRoute.route("/api", apiRoute);
+exampleRoute.route("/htmx", htmxRoute);
 app.route("/example", exampleRoute);
 export default app;
