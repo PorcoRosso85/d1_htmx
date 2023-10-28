@@ -38,7 +38,8 @@ import { contactsListData } from "./components/contacts/contactData";
 import { ContactsTable } from "./components/contacts/ContactsTable";
 
 type Bindings = {
-  DB: D1Database;
+  todoDB: D1Database;
+  listDB: D1Database;
 };
 
 type Todo = {
@@ -52,9 +53,9 @@ app
   .use("*", logger())
   .get("*", renderer)
   .get("/", async (c) => {
-    const { results } = await c.env.DB.prepare(
-      `SELECT id, title FROM todo;`
-    ).all<Todo>();
+    const { results } = await c.env.todoDB
+      .prepare(`SELECT id, title FROM todo;`)
+      .all<Todo>();
     const todos = results;
     return c.render(
       <>
@@ -72,7 +73,6 @@ app
 const todoRoute = new Hono();
 todoRoute
   .post(
-    // app.post(
     "/",
     zValidator(
       "form",
@@ -83,7 +83,8 @@ todoRoute
     async (c) => {
       const { title } = c.req.valid("form");
       const id = crypto.randomUUID();
-      await c.env.DB.prepare(`INSERT INTO todo(id, title) VALUES(?, ?);`)
+      await c.env.todoDB
+        .prepare(`INSERT INTO todo(id, title) VALUES(?, ?);`)
         .bind(id, title)
         .run();
       return c.html(<Item title={title} id={id} />);
@@ -91,7 +92,7 @@ todoRoute
   )
   .delete("/:id", async (c) => {
     const id = c.req.param("id");
-    await c.env.DB.prepare(`DELETE FROM todo WHERE id = ?;`).bind(id).run();
+    await c.env.todoDB.prepare(`DELETE FROM todo WHERE id = ?;`).bind(id).run();
     c.status(200);
     return c.body(null);
   });
@@ -311,9 +312,9 @@ const exampleRoute = new Hono();
 exampleRoute
   .get("*", cache({ cacheName: "example-app", cacheControl: "max-age=3600" }))
   .get("/htmx", async (c) => {
-    const { results } = await c.env.DB.prepare(
-      `SELECT id, title FROM list;`
-    ).all<ListItem>();
+    const { results } = await c.env.listDB
+      .prepare(`SELECT id, title FROM list;`)
+      .all<ListItem>();
     const listItems = results;
     return c.html(
       <HtmlElt>
@@ -327,7 +328,7 @@ exampleRoute
     );
   })
   .post(
-    "htmx/newest",
+    "/htmx/newest",
     zValidator(
       "form",
       z.object({
@@ -337,7 +338,8 @@ exampleRoute
     async (c) => {
       const { title } = c.req.valid("form");
       const id = crypto.randomUUID();
-      await c.env.DB.prepare(`INSERT INTO list(id, title) VALUES(?, ?);`)
+      await c.env.todoDB
+        .prepare(`INSERT INTO list(id, title) VALUES(?, ?);`)
         .bind(id, title)
         .run();
       return c.html(<Newest id={id} title={title} />);
@@ -345,7 +347,7 @@ exampleRoute
   )
   .delete("/htmx/:id", async (c) => {
     const id = c.req.param("id");
-    await c.env.DB.prepare(`DELETE FROM list WHERE id= ?;`).bind(id).run();
+    await c.env.todoDB.prepare(`DELETE FROM list WHERE id= ?;`).bind(id).run();
     c.status(200);
     return c.body(null);
   })
