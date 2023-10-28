@@ -1,9 +1,15 @@
 import { Hono, HonoRequest } from "hono";
 import { object, z } from "zod";
 import { zValidator } from "@hono/zod-validator";
+import { basicAuth } from "hono/basic-auth";
 
 import { renderer, AddTodo, Item, Htmx, Newest } from "./components";
-import { HtmlElt, ListItem, ScriptElt } from "./components/graphs";
+import {
+  DeleteButton,
+  HtmlElt,
+  ListItem,
+  ScriptElt,
+} from "./components/graphs";
 import { BulkUpdate } from "./components/BulkUpdate";
 import { ClickToEdit } from "./components/ClickToEdit";
 import { ContactRow } from "./components/contacts/ContactRow";
@@ -249,6 +255,20 @@ modalRoute
     return c.html(<>{submitted}</>);
   });
 
+const authRoute = new Hono();
+authRoute
+  .get("/page", (c) => {
+    return c.html(
+      <>
+        <script src="https://unpkg.com/htmx.org@1.9.3"></script>
+        <button hx-delete="/example/auth/page">delete page</button>
+      </>
+    );
+  })
+  .delete("/page", basicAuth({ username: "root", password: "root" }), (c) => {
+    return c.html(<>page deleted</>);
+  });
+
 const exampleRoute = new Hono();
 exampleRoute
   .get("/htmx", async (c) => {
@@ -333,5 +353,6 @@ exampleRoute.route("/contact", contactRoute);
 exampleRoute.route("/modal", modalRoute);
 exampleRoute.route("/job", jobRoute);
 exampleRoute.route("/model", modelRoute);
+exampleRoute.route("/auth", authRoute);
 app.route("/example", exampleRoute);
 export default app;
