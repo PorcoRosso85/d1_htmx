@@ -4,6 +4,7 @@ import { zValidator } from "@hono/zod-validator";
 import { basicAuth } from "hono/basic-auth";
 import { bearerAuth } from "hono/bearer-auth";
 import { cache } from "hono/cache";
+import { cors } from "hono/cors";
 
 import { renderer, AddTodo, Item, Htmx, Newest } from "./components";
 import {
@@ -271,9 +272,23 @@ authRoute
 
 const apiRoute = new Hono();
 const token = "HONO";
-apiRoute.use("/*", bearerAuth({ token })).get("/page", (c) => {
-  return c.html(<>api already bearer authed</>);
-});
+apiRoute
+  // .use("*", logger())
+  .use(
+    "/*",
+    cors({
+      origin: ["https://example.com", "https://example.org"],
+      allowHeaders: ["X-Custom-Header", "Upgrade-Insecure-Requests"],
+      allowMethods: ["POST", "GET", "OPTIONS"],
+      exposeHeaders: ["Content-Length"],
+      maxAge: 600,
+      credentials: true,
+    })
+  )
+  .use("/*", bearerAuth({ token }))
+  .get("/page", (c) => {
+    return c.html(<>api already bearer authed</>);
+  });
 
 const exampleRoute = new Hono();
 exampleRoute
